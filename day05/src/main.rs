@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::io;
-
+use std::cmp::max;
 
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 struct Point(i64, i64);
@@ -26,10 +26,17 @@ impl Line {
 
   fn points(&self) -> Vec<Point> {
     let mut out: Vec<Point> = Vec::new();
-    let mut x_step: i64 = self.
-    let mut y_step: i64 = 1;
-
-    let num_steps = (self.end.0 - self.start.0).abs() + 1;
+    let x_diff = self.end.0 - self.start.0;
+    let mut x_step = x_diff;
+    if x_step != 0 {
+      x_step /= x_diff.abs()
+    } 
+    let y_diff = self.end.1 - self.start.1;
+    let mut y_step = y_diff;
+    if y_step != 0 {
+      y_step /= y_diff.abs();
+    }
+    let num_steps = max(x_diff.abs(), y_diff.abs()) + 1;
     for i in 0..num_steps {
       out.push(Point(self.start.0+i*x_step, self.start.1+i*y_step));
     }
@@ -57,9 +64,9 @@ impl Iterator for InputReader {
 fn main() -> io::Result<()>{
   let mut m = HashMap::new();
   for l in InputReader {
-    println!("line {:?}", l);
+    //println!("line {:?}", l);
     for p in l.points() {
-      println!("  point {:?}", p);
+      //println!("  point {:?}", p);
       let count = m.entry(p).or_insert(0);
       *count += 1;
     }
